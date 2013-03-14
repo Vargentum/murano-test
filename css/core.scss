@@ -1,0 +1,494 @@
+@charset "utf-8";
+@import "compass/reset";
+//html5boilerplate
+@import "h5bp";
+@include h5bp-display;
+@include h5bp-chromeframe;
+@include h5bp-media;
+@include h5bp-base;
+@include h5bp-typography;
+@include h5bp-figures;
+@include h5bp-forms;
+@include h5bp-embeds;
+@include h5bp-tables;
+@include h5bp-helpers;
+//COMPASS
+@import "compass";
+@import "compass/layout/sticky-footer";
+
+
+//SPRITING
+//@import "/*.png";
+
+*,*:before,*:after,input[type=search]{@include box-sizing(border-box);}//border-box-sizing for all elems
+
+
+/*===============================================================
+ FONT FACE
+===============================================================*/
+@each $font-face in
+  fontName{
+  @font-face {
+    font-family: $font-face; font-style: normal; font-weight: normal;
+    src: url('../fonts/#{$font-face}.eot');
+    src: url('../fonts/#{$font-face}.eot?#iefix') format('embedded-opentype'),
+    url('../fonts/#{$font-face}.woff') format('woff'),
+    url('../fonts/#{$font-face}.ttf')  format('truetype');
+  }
+}
+//b,strong{font-weight: bold;}
+//em{font-style: italic;}
+
+
+/*===============================================================
+ VARIABLES
+===============================================================*/
+//$baseMinWidth           : 980px;
+//$baseMaxWidth           : 1280px;
+$baseWidth                : 500px;
+$footerHeight             : 110px;
+// Main colour palette
+$primary							: #333;
+$secondary							: #fff;
+$tertiary							: #4d5052;
+//$quateriary                         : #000;
+// Assign colours to variable roles
+$baseFontColor                      : $primary;
+$attentionColor 					: $secondary;
+$borderColor                        : $tertiary;
+// Alerts, errors and UI interface
+$alert 								: red;
+$success 							: green;
+//links colors
+$linkColor                          : $primary;
+$hoverLinkColor                     : $primary;
+$activeLinkColor                    : $primary;
+$visitedLinkColor                   : $primary;
+$focusedLinkColor                   : $primary;
+//fonts
+$baseFamily                         : Arial, "Helvetica CY", "Nimbus Sans L", sans-serif;
+$titleFamily                        : Georgia, Times, "Times New Roman", serif;
+//misc
+$baseFontSize                       : 13px;
+$baseLineHeight                     : 1.4;
+$paragraphSpace                     : 15px;
+$inputHeight                        : 40px;
+//default vars
+$lmc-1                              : $linkColor !default;
+$lmc-2                              : $hoverLinkColor !default;
+$decorationType                     : dotted !default;
+$default-text-weight                : normal !default;
+
+
+/*===============================================================
+ HELPER CLASSES
+===============================================================*/
+//Line helpers
+.hLine{&>*{@include inline-block;}}
+.hLine-top{
+  @extend .hLine;
+  &>*{vertical-align: top;}
+}
+.jLine{
+  text-align: justify;
+  line-height: 0;
+  font-size: 1px;
+  text-justify: newspaper;
+  zoom:1;
+  text-align-last: justify;
+  &:after{
+    content: "";
+    display: inline-block;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+    width: 100%;
+  }
+  >*{
+    text-align: left;
+    @include inline-block;
+    line-height: $baseLineHeight;
+    font-size: $baseFontSize;
+  }
+}
+.jLine-top{
+  @extend .jLine;
+  &>*{vertical-align: top;}
+}
+.fLine{
+  .flexbox &{@include display-box;}
+  .no-flexbox &{@extend .hLine;}
+}
+.fLine-full{
+  .flexbox &{
+    @include display-box;
+    @include box-pack(justify);
+    &>*{@include box-flex(1);}
+  }
+  .no-flexbox &{@extend .jLine;}
+}
+//State
+.is-hidden {
+  display: none;
+}
+.is-shown, .is-block {
+  display: block;
+}
+.is-uppercase {
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.is-lowercase {
+  text-transform: lowercase;
+}
+//Misc
+.pageWidth{
+  width:$baseWidth;
+  min-width: $baseWidth;
+  margin-left:auto;
+  margin-right: auto;
+  //$baseMinWidth: 980px;
+  //$baseMaxWidth: 1280px;
+}
+.pseudo-block{
+  content: '';
+  display: block;
+  position: absolute;
+}
+.pseudo-inline{
+  content: '';
+  @include inline-block;
+}
+.input-reset{
+  background-color: transparent;
+  border: none;
+  &:hover,&:focus{outline: none;}
+}
+.text-hide {
+  font: 0/0 serif;
+  text-shadow: none;
+  color: transparent;
+}
+:root .gradient {filter: none \0/IE9; }//hack for ie9 - need for gradient backgrounds
+.ie9-gradient-support{$experimental-support-for-svg: true; @extend .gradient;}
+
+
+/*===============================================================
+ MIXINS
+===============================================================*/
+//RESPONSIVE
+@mixin respond-to($media) {
+  @if $media == ie10{
+    @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {@content;}
+  }
+  @if $media == iphone{
+    @media only screen and (min-device-width : 320px) and (max-device-width : 480px) {@content;}
+  }
+  @else if $media == ipad{
+    @media only screen and (min-device-width : 768px) and (max-device-width : 1024px) {@content;}
+  }
+}
+
+//RETINA
+@mixin image-2x($image, $width, $height) {
+  @media (min--moz-device-pixel-ratio: 1.3),
+  (-o-min-device-pixel-ratio: 2.6/2),
+  (-webkit-min-device-pixel-ratio: 1.3),
+  (min-device-pixel-ratio: 1.3),
+  (min-resolution: 1.3dppx) {
+  /* on retina, use image that's scaled by 2 */
+    background-image: url($image);
+    background-size: $width $height;
+  }
+}
+
+//Link Mixin Colors
+@mixin singleLink($lmc-1){@include link-colors($lmc-1,$lmc-1,$lmc-1,$lmc-1,$lmc-1);}
+@mixin simpleLink($lmc-1, $lmc-2){@include link-colors($lmc-1,$lmc-2,$lmc-1, $lmc-1, $lmc-2);}
+@mixin singleLink-custom($lmc-1, $decorationType){
+  @include singleLink($lmc-1);
+  text-decoration: none;
+  border-bottom: 1px $decorationType $lmc-1;
+}
+@mixin simpleLink-custom($lmc-1,$lmc-2,$decorationType){
+  @include simpleLink($lmc-1,$lmc-2);
+  text-decoration: none;
+  border-bottom: 1px $decorationType $lmc-1;
+  &:hover,&:focus{border-bottom-color: $lmc-2;}
+}
+
+//other mixins
+@mixin columnize($count){
+  .csscolumns &{@include column-count(#{$count});}
+}
+@mixin text($text-size,$text-color,$text-weight: $default-text-weight){
+  $defaultl-text-weight: normal;
+  font-size: $text-size;
+  color: $text-color;
+  font-weight: $text-weight;
+}
+
+//img containers
+@mixin img-container-horisontal($width){
+  width:$width;
+  &>img{width:$width; height: auto;}
+}
+@mixin img-container-vertical($width){
+  height:$width;
+  &>img{height:$width; width: auto;}
+}
+
+/*===============================================================
+ SETTING UP FORMS
+===============================================================*/
+label, select {
+  display: block;
+}
+
+input[type="search"] {
+  //-webkit-box-sizing: content-box;
+  //-moz-box-sizing: content-box;
+  -webkit-appearance: textfield;
+  //box-sizing: content-box;
+}
+
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+}
+
+textarea {
+  overflow: auto;
+  vertical-align: top;
+}
+
+textarea,
+input[type="text"],
+input[type="password"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="date"],
+input[type="month"],
+input[type="time"],
+input[type="week"],
+input[type="number"],
+input[type="email"],
+input[type="url"],
+input[type="search"],
+input[type="tel"] {
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -moz-transition: border linear 0.2s, box-shadow linear 0.2s;
+  -o-transition: border linear 0.2s, box-shadow linear 0.2s;
+  transition: border linear 0.2s, box-shadow linear 0.2s;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+  margin: 4px 0 0;
+  margin-top: 1px \9;
+  *margin-top: 0;
+  line-height: normal;
+  cursor: pointer;
+}
+
+input[type="file"],
+input[type="image"],
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="radio"],
+input[type="checkbox"] {
+  width: auto;
+}
+
+select,
+input[type="file"] {
+  *margin-top: 4px; 				/* In IE7, the height of the select element cannot be changed by height, only font-size */
+}
+
+select:focus,
+input[type="file"]:focus,
+input[type="radio"]:focus,
+input[type="checkbox"]:focus {
+  outline: thin dotted #333;
+  outline: 5px auto -webkit-focus-ring-color;
+  outline-offset: -2px;
+}
+
+
+/*===============================================================
+CUSTOM TYPOGRAPHY
+===============================================================*/
+html, button, input, select, textarea {
+  height: 100%;
+  font-family: $baseFamily;
+  color:$baseFontColor;
+}
+h1,h2,h3,h4,h5,h6,p,ul,ol{
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+em{font-style: italic;}
+a{
+  @include link-colors($linkColor, $hoverLinkColor, $activeLinkColor, $visitedLinkColor, $focusedLinkColor);
+  @include single-transition($duration:.5s);
+  &:focus {outline: thin dotted;}
+  &:active,&:hover {outline: none;}
+}
+//@include sticky-footer($footerHeight, ".b-stickyFooter_helper-1", ".b-stickyFooter_helper-2", ".b-footer");
+
+.b-typography{
+  p{margin-bottom: $paragraphSpace;}
+  ul{
+    list-style-type: disc;
+    margin-bottom:$paragraphSpace;
+    //li{
+    //  position: relative;
+    //  &:before{
+    //    content: '-';
+    //    position: absolute;
+    //    right:100%;
+    //  }
+    //}
+  }
+  ol{
+    margin-bottom:$paragraphSpace;
+    list-style-type: decimal;
+  }
+  h1 {font-size: 2.2em;}
+  h2 {font-size: 1.7em;}
+  h3 {font-size: 1em; font-weight: bold;}
+  h4 {font-size: 0.9em;}
+  h5 {font-size: 0.8em;}
+  h6 {font-size: 0.7em;}
+}
+
+
+
+
+/*===============================================================
+DEVELOPER STYLES RUN BELOW THIS POINT
+===============================================================*/
+.b-container{
+  @extend .pageWidth;
+  padding-top:40px;
+}
+
+.b-hero{
+  margin:15px 0;
+  font-size: 60px;
+  font-weight: bold;
+  //background: -webkit-linear-gradient(#373737, #5b5e61);
+  //-webkit-background-clip: text;
+  //-webkit-text-fill-color: transparent;
+}
+
+.b-nav{
+  margin:15px 0;
+  background-color: #bec1c4;
+  @include filter-gradient(#bec1c4, #92969b, vertical);
+  @include background-image(linear-gradient(top,  #bec1c4 0%,#92969b 100%));
+  border:1px solid $borderColor;
+  box-shadow: 0 0 6px #bec1c4;
+}
+.b-nav__list{
+  @extend .hLine;
+  @include inline-block;
+  border-right: 1px solid $borderColor;
+  width:330px;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  a{
+    @include singleLink($attentionColor);
+    text-decoration: none;
+  }
+  .level-1{
+    width:25%;
+    position: relative;
+    &>a{
+      display: block;
+      padding: 10px 0;
+      text-align: center;
+      border-right: 1px solid #9c9ea1;
+      border-left: 1px solid #a0a3a8;
+      &:hover,&:focus{
+        outline: none;
+        background-color: #666;
+        @include box-shadow(inset 0 3px 4px rgba(0,0,0,.34));
+      }
+    }
+    &.active>a{
+      background-color: #666;
+      @include box-shadow(inset 0 3px 4px rgba(0,0,0,.34));
+    }
+    &:first-child>a{border-left: none;}
+    &:last-child>a{border-right: none;}
+  }
+  .level-2{
+    position: absolute;
+    width:100%;
+    background-color: #666;
+    @include border-radius(0 0 5px 5px);
+    text-align: center;
+    overflow: hidden;
+    a{
+      display: block;
+      padding:10px 0;
+      &:hover,&:focus{background-color: #bec1c4;}
+    }
+  }
+}
+.b-nav__search{
+  @include inline-block;
+  margin-left: 3px;
+  input{
+    width:155px;
+    font-size: 13px;
+    height: 25px;
+    @include border-radius;
+    border:1px solid $borderColor;
+    padding: 0 8px;
+
+  }
+  button{
+    position:absolute;
+    right:100%;
+  }
+}
+
+.b-content_object{
+  @extend .jLine-top;
+  margin:35px 0;
+  .image{
+    padding-top: 4px;
+    @include inline-block;
+    img{border:1px solid $borderColor;}
+    font-size: 11px;
+  }
+  .text{
+    width:320px;
+    line-height: 1.6;
+  }
+}
+/*PLUGINS styles -------------------*/
+
+//FF special
+@-moz-document url-prefix() {}
+
+//debug grid
+//* { outline: 2px dotted red; }
+//* * { outline: 2px dotted green; }
+//* * * { outline: 2px dotted orange; }
+//* * * * { outline: 2px dotted blue; }
+//* * * * * { outline: 1px solid red; }
+//* * * * * * { outline: 1px solid green; }
+//* * * * * * * { outline: 1px solid orange; }
+//* * * * * * * * { outline: 1px solid blue; }
