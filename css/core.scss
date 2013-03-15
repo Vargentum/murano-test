@@ -385,9 +385,9 @@ DEVELOPER STYLES RUN BELOW THIS POINT
   margin:15px 0;
   font-size: 60px;
   font-weight: bold;
-  //background: -webkit-linear-gradient(#373737, #5b5e61);
-  //-webkit-background-clip: text;
-  //-webkit-text-fill-color: transparent;
+  background: -webkit-linear-gradient(#373737, #5b5e61);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .b-nav{
@@ -406,6 +406,7 @@ DEVELOPER STYLES RUN BELOW THIS POINT
   font-size: 14px;
   font-weight: bold;
   text-shadow: 0 -1px 0 rgba(0,0,0,.25);
+  .ie7 &{border-right: none;}
   a{
     @include singleLink($attentionColor);
     text-decoration: none;
@@ -413,6 +414,7 @@ DEVELOPER STYLES RUN BELOW THIS POINT
   .level-1{
     width:25%;
     position: relative;
+    .ie7 &{width:24.5%;}
     &>a{
       display: block;
       padding: 10px 0;
@@ -456,7 +458,11 @@ DEVELOPER STYLES RUN BELOW THIS POINT
     @include border-radius;
     border:1px solid $borderColor;
     padding: 0 8px;
-
+    .ie7 &{
+      width:135px;
+      display: block;
+      margin-top: -15px;
+    }
   }
   button{
     position:absolute;
